@@ -1,12 +1,8 @@
 import sys
-from dotenv import load_dotenv, dotenv_values
-from os import environ
+from dotenv import dotenv_values
 from pathlib import Path
 from datetime import timedelta
 from cachelib.file import FileSystemCache
-
-# Carga las variables de entorno
-env_vars = dotenv_values()
 
 # Establece la configuración de la aplicación
 class Config:
@@ -14,8 +10,10 @@ class Config:
     DEBUG = True
     # Calcula el directorio raiz de la aplicación
     DOCUMENT_ROOT = Path(__file__).parent.as_posix()
+    # Lee las variables de entorno a un diccionario
+    ENV_VARS = dotenv_values(f'{DOCUMENT_ROOT}/.env')
     # Necesario para las sesiones
-    SECRET_KEY=env_vars['SECRET_KEY']
+    SECRET_KEY=ENV_VARS['SECRET_KEY']
     # Sesión basada en archivos temporales del servidor
     SESSION_TYPE='cachelib'
     # Utilizando un límite de sesiones antes de hacer limpieza y estableciendo
@@ -26,7 +24,7 @@ class Config:
     PERMANENT_SESSION_LIFETIME=timedelta(days=5)
     # Sistema gestor de BBDD utilizado
     SQLALCHEMY_DATABASE_URI=f'mysql+mysqlconnector://{
-        env_vars['DB_USERNAME']}:{env_vars['DB_PASSWORD']
+        ENV_VARS['DB_USERNAME']}:{ENV_VARS['DB_PASSWORD']
         }@localhost:3306/blog_posts'
     # SQLALCHEMY_DATABASE_URI='sqlite:///blog_posts.db'
     # Tamañno máximo del upload al servidor
